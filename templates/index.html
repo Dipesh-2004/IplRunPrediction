@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Win Probability Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-700">
+        <h1 class="text-3xl font-extrabold text-center mb-2 bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+            IPL Win Predictor
+        </h1>
+        <p class="text-center text-slate-400 text-sm mb-8">Enter live match details to calculate chasing team's probability</p>
+
+        <form action="/predict" method="POST" class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">Batting Team (Chasing)</label>
+                    <select name="batting_team" required class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-200">
+                        <option value="Sunrisers Hyderabad">Sunrisers Hyderabad</option>
+                        <option value="Mumbai Indians">Mumbai Indians</option>
+                        <option value="Royal Challengers Bangalore">Royal Challengers Bangalore</option>
+                        <option value="Kolkata Knight Riders">Kolkata Knight Riders</option>
+                        <option value="Kings XI Punjab">Kings XI Punjab</option>
+                        <option value="Chennai Super Kings">Chennai Super Kings</option>
+                        <option value="Rajasthan Royals">Rajasthan Royals</option>
+                        <option value="Delhi Capitals">Delhi Capitals</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">Bowling Team (Defending)</label>
+                    <select name="bowling_team" required class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-200">
+                        <option value="Mumbai Indians">Mumbai Indians</option>
+                        <option value="Sunrisers Hyderabad">Sunrisers Hyderabad</option>
+                        <option value="Royal Challengers Bangalore">Royal Challengers Bangalore</option>
+                        <option value="Kolkata Knight Riders">Kolkata Knight Riders</option>
+                        <option value="Kings XI Punjab">Kings XI Punjab</option>
+                        <option value="Chennai Super Kings">Chennai Super Kings</option>
+                        <option value="Rajasthan Royals">Rajasthan Royals</option>
+                        <option value="Delhi Capitals">Delhi Capitals</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-slate-300">Host City</label>
+                <select name="city" required class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500 text-slate-200">
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Delhi">Delhi</option>
+                </select>
+            </div>
+
+            <hr class="border-slate-700 my-4" />
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Target Score</label>
+                    <input type="number" name="target" required min="1" placeholder="185" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Runs Left</label>
+                    <input type="number" name="runs_left" required min="0" placeholder="45" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Balls Left</label>
+                    <input type="number" name="balls_left" required min="1" max="120" placeholder="30" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">Wickets Left</label>
+                    <input type="number" name="wickets_left" required min="0" max="10" placeholder="6" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 transform active:scale-[0.99] cursor-pointer shadow-lg shadow-indigo-900/40">
+                Predict Win Probability
+            </button>
+        </form>
+
+        {% if prediction %}
+        <div class="mt-8 p-6 bg-slate-900 rounded-xl border border-slate-700 text-center animate-fade-in">
+            <h2 class="text-xl font-bold mb-2 text-slate-300">Win Probability</h2>
+            <p class="text-lg font-semibold text-emerald-400 mb-4">{{ result }}</p>
+            <div class="flex items-center justify-around text-2xl font-black">
+                <div class="text-blue-400">
+                    <p class="text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wide">{{ batting_team }}</p>
+                    <span class="text-3xl md:text-4xl">{{ prediction[0] }}%</span>
+                </div>
+                <div class="text-slate-500 font-light text-xl">vs</div>
+                <div class="text-rose-400">
+                    <p class="text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wide">{{ bowling_team }}</p>
+                    <span class="text-3xl md:text-4xl">{{ prediction[1] }}%</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        const battingSelect = document.querySelector('select[name="batting_team"]');
+        const bowlingSelect = document.querySelector('select[name="bowling_team"]');
+
+        function checkTeams() {
+            if (battingSelect.value === bowlingSelect.value) {
+                alert("Batting team and Bowling team cannot be the same!");
+                for (let option of bowlingSelect.options) {
+                    if (option.value !== battingSelect.value) {
+                        bowlingSelect.value = option.value;
+                        break;
+                    }
+                }
+            }
+        }
+
+        battingSelect.addEventListener('change', checkTeams);
+        bowlingSelect.addEventListener('change', checkTeams);
+    </script>
+</body>
+</html>
